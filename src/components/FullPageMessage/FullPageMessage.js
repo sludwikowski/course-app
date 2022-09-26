@@ -16,6 +16,7 @@ export const FullPageMessage = (props) => {
     message,
     buttonLabel = 'GO BACK',
     iconVariant = 'info',
+    onButtonClick,
     ...otherProps
   } = props
 
@@ -43,6 +44,7 @@ export const FullPageMessage = (props) => {
         <Button
           variant={'contained'}
           color={'primary'}
+          onClick={onButtonClick}
         >
           {buttonLabel}
         </Button>
@@ -55,7 +57,8 @@ FullPageMessage.propTypes = {
   className: PropTypes.string,
   message: PropTypes.string.isRequired,
   buttonLabel: PropTypes.string,
-  iconVariant: PropTypes.oneOf(['error', 'info'])
+  iconVariant: PropTypes.oneOf(['error', 'info']),
+  onButtonClick: PropTypes.func.isRequired
 }
 
 export default FullPageMessage
