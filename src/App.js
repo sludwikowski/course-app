@@ -1,7 +1,8 @@
 import React from 'react'
-import FullPageLoader from './components/FullPageLoader'
 
+import FullPageLoader from './components/FullPageLoader'
 import Typography from './components/Typography'
+import Button from './components/Button'
 
 export class App extends React.Component {
   state = {
@@ -65,6 +66,27 @@ export class App extends React.Component {
         >
           Button
         </Typography>
+        <br/>
+        <Button
+          variant={'contained'}
+          color={'primary'}
+        >
+          CONTAINED PRIMARY
+        </Button>
+        <br/>
+        <Button
+          variant={'contained'}
+          color={'secondary'}
+        >
+          CONTAINED SECONDARY
+        </Button>
+        <br/>
+        <Button
+          variant={'text'}
+          color={'primary'}
+        >
+          TEXT PRIMARY
+        </Button>
       </div>
     )
   }
