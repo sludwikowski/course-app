@@ -1,6 +1,6 @@
 {
-  "name": "to-do-list",
-  "version": "0.1.0",
+  "name": "course-app",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "react": "^17.0.2",
