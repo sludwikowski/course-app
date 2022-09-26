@@ -41,13 +41,7 @@ export class App extends React.Component {
   }
 
   render () {
-    const {
-      isLoading,
-      isInfoDisplayed,
-      infoMessage,
-      hasError,
-      errorMessage
-    } = this.state
+    const { isLoading } = this.state
     return (
       <div>
         <h1>Course App</h1>
@@ -94,27 +88,9 @@ export class App extends React.Component {
         >
           TEXT PRIMARY
         </Button>
-
-        {
-        isInfoDisplayed
-          ? <FullPageMessage
-              message={infoMessage}
-              iconVariant={'info'}
-              onButtonClick={console.log}
-            />
-          : null
-        }
-
-        {
-        hasError
-          ? <FullPageMessage
-              message={errorMessage}
-              iconVariant={'error'}
-              onButtonClick={console.log}
-            />
-          : null
-        }
-
+        <FullPageMessage
+          message={'INFO'}
+        />
       </div>
     )
   }
