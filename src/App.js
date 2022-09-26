@@ -1,6 +1,7 @@
 import React from 'react'
 
 import FullPageLoader from './components/FullPageLoader'
+import FullPageMessage from './components/FullPageMessage'
 import Typography from './components/Typography'
 import Button from './components/Button'
 
@@ -87,6 +88,9 @@ export class App extends React.Component {
         >
           TEXT PRIMARY
         </Button>
+        <FullPageMessage
+          message={'INFO'}
+        />
       </div>
     )
   }
