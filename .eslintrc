@@ -1,5 +1,9 @@
 {
-	"extends": ["react-app", "standard", "plugin:react/recommended"],
+	"extends": [
+		"react-app",
+		"standard",
+		"plugin:react/recommended"
+	],
 	"rules": {
 		"react/jsx-curly-spacing": [
 			"warn",
@@ -15,11 +19,26 @@
 				"children": "never"
 			}
 		],
-		"react/jsx-max-props-per-line": ["warn"],
-		"react/jsx-indent": ["warn", 2],
-		"react/jsx-indent-props": ["warn", 2],
-		"react/jsx-closing-tag-location": ["warn"],
-		"react/jsx-closing-bracket-location": ["warn"],
-		"react/jsx-first-prop-new-line": ["warn", "multiline"]
+		"react/jsx-max-props-per-line": [
+			"warn"
+		],
+		"react/jsx-indent": [
+			"warn",
+			2
+		],
+		"react/jsx-indent-props": [
+			"warn",
+			2
+		],
+		"react/jsx-closing-tag-location": [
+			"warn"
+		],
+		"react/jsx-closing-bracket-location": [
+			"warn"
+		],
+		"react/jsx-first-prop-new-line": [
+			"warn",
+			"multiline"
+		]
 	}
 }

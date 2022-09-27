@@ -8,7 +8,6 @@ export const FullPageLayout = (props) => {
     className,
     children,
     ...otherProps
-
   } = props
 
   return (

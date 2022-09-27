@@ -1,9 +1,11 @@
 import React from 'react'
 
-import FullPageLoader from './components/FullPageLoader'
+import FullPageLayout from './components/FullPageLayout'
 import FullPageMessage from './components/FullPageMessage'
+import FullPageLoader from './components/FullPageLoader'
 import Typography from './components/Typography'
-import Button from './components/Button'
+import Button from './components/Button/Button'
+import Message from './components/Message'
 
 export class App extends React.Component {
   state = {
@@ -50,7 +52,7 @@ export class App extends React.Component {
     } = this.state
     return (
       <div>
-        <h1>Course App</h1>
+        <h1>CodeRoad APP</h1>
         {
           isLoading
             ? <FullPageLoader />
@@ -73,21 +75,23 @@ export class App extends React.Component {
         >
           Button
         </Typography>
-        <br/>
+        <br />
         <Button
           variant={'contained'}
           color={'primary'}
         >
           CONTAINED PRIMARY
         </Button>
-        <br/>
+        <br />
+        <br />
         <Button
           variant={'contained'}
           color={'secondary'}
         >
           CONTAINED SECONDARY
         </Button>
-        <br/>
+        <br />
+        <br />
         <Button
           variant={'text'}
           color={'primary'}
@@ -96,23 +100,43 @@ export class App extends React.Component {
         </Button>
 
         {
-        isInfoDisplayed
-          ? <FullPageMessage
-              message={infoMessage}
-              iconVariant={'info'}
-              onButtonClick={console.log}
-            />
-          : null
+          isInfoDisplayed
+            ? <FullPageMessage
+                message={infoMessage}
+                iconVariant={'info'}
+                onButtonClick={console.log}
+              />
+            : null
         }
 
-        {
-        hasError
-          ? <FullPageMessage
+        {/* {
+          hasError ?
+            <FullPageMessage
+              className={'regular-class'}
+              wrapperProps={{
+                className: 'wrapper-class'
+              }}
               message={errorMessage}
               iconVariant={'error'}
               onButtonClick={console.log}
             />
-          : null
+            :
+            null
+        } */}
+
+        {
+          hasError
+            ? <FullPageLayout
+                className={'wrapper-class'}
+              >
+              <Message
+                className={'regular-class'}
+                message={errorMessage}
+                iconVariant={'error'}
+                onButtonClick={console.log}
+              />
+              </FullPageLayout>
+            : null
         }
 
       </div>
