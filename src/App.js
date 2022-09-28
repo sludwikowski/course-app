@@ -135,7 +135,7 @@ export class App extends React.Component {
                 iconVariant={'error'}
                 onButtonClick={console.log}
               />
-              </FullPageLayout>
+            </FullPageLayout>
             : null
         }
 
