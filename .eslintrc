@@ -5,6 +5,12 @@
 		"plugin:react/recommended"
 	],
 	"rules": {
+		"node/handle-callback-err": [
+			"off"
+		],
+		"operator-linebreak": [
+			"off"
+		],
 		"react/jsx-curly-spacing": [
 			"warn",
 			"never",

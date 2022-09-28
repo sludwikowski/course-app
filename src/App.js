@@ -43,6 +43,8 @@ export class App extends React.Component {
 
   render () {
     const {
+      loginEmail,
+      loginPassword,
       isLoading,
       isInfoDisplayed,
       infoMessage,
@@ -55,8 +57,17 @@ export class App extends React.Component {
         {
           notLoginUserRoute === 'LOGIN'
             ? <FullPageLayout>
-              <LoginForm/>
-              </FullPageLayout>
+              <LoginForm
+                email={loginEmail}
+                password={loginPassword}
+                onChangeEmail={(e) => this.setState(() => ({ loginEmail: e.target.value }))}
+                onChangePassword={(e) => this.setState(() => ({ loginPassword: e.target.value }))}
+                onClickLogin={() => console.log('onClickLogin')}
+                onClickCreateAccount={() => console.log('onClickCreateAccount')}
+                onClickForgotPassword={() => console.log('onClickForgotPassword')}
+              />
+              {/* eslint-disable-next-line react/jsx-closing-tag-location */}
+            </FullPageLayout>
             : null
         }
 
@@ -87,6 +98,7 @@ export class App extends React.Component {
                 iconVariant={'error'}
                 onButtonClick={console.log}
               />
+              {/* eslint-disable-next-line react/jsx-closing-tag-location */}
             </FullPageLayout>
             : null
         }
