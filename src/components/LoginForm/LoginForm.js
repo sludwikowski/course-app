@@ -1,6 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import Logo from '../Logo'
+// import Typography from '../Typography'
+// import TextField from '../TextField'
+// import Button from '../Button'
+
 import classes from './styles.module.css'
 
 export const LoginForm = (props) => {
@@ -14,7 +19,7 @@ export const LoginForm = (props) => {
       className={`${classes.root}${className ? ` ${className}` : ''}`}
       {...otherProps}
     >
-      login form
+      <Logo/>
     </div>
   )
 }
