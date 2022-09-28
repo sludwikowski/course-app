@@ -54,7 +54,9 @@ export class App extends React.Component {
       <div>
         {
           notLoginUserRoute === 'LOGIN'
-            ? <LoginForm/>
+            ? <FullPageLayout>
+              <LoginForm/>
+              </FullPageLayout>
             : null
         }
 
@@ -85,7 +87,7 @@ export class App extends React.Component {
                 iconVariant={'error'}
                 onButtonClick={console.log}
               />
-              </FullPageLayout>
+            </FullPageLayout>
             : null
         }
 
