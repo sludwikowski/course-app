@@ -6,6 +6,7 @@ import FullPageLoader from './components/FullPageLoader'
 import Typography from './components/Typography'
 import Button from './components/Button/Button'
 import Message from './components/Message'
+import TextField from './components/TextField'
 
 export class App extends React.Component {
   state = {
@@ -135,9 +136,14 @@ export class App extends React.Component {
                 iconVariant={'error'}
                 onButtonClick={console.log}
               />
-            </FullPageLayout>
+              </FullPageLayout>
             : null
         }
+        <br/>
+        <br/>
+        <TextField
+          placeholder={'E-mail'}
+        />
 
       </div>
     )
