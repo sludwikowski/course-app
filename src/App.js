@@ -148,7 +148,7 @@ export class App extends React.Component {
                 className={'regular-class'}
                 message={errorMessage}
                 iconVariant={'error'}
-                onButtonClick={console.log}
+                onButtonClick={this.dismissError}
               />
               {/* eslint-disable-next-line react/jsx-closing-tag-location */}
             </FullPageLayout>
