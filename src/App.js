@@ -6,6 +6,7 @@ import FullPageLoader from './components/FullPageLoader'
 import Message from './components/Message'
 import LoginForm from './components/LoginForm/LoginForm'
 import CreateAccountForm from './components/CreateAccountForm'
+import RecoverPasswordForm from './components/RecoverPasswordForm'
 export class App extends React.Component {
   state = {
     // global state
@@ -22,7 +23,7 @@ export class App extends React.Component {
     userAvatar: '',
 
     // router state
-    notLoginUserRoute: 'CREATE-ACCOUNT', // 'CREATE-ACCOUNT' or 'FORGOT-PASSWORD'
+    notLoginUserRoute: 'RECOVER-PASSWORD', // 'CREATE-ACCOUNT' or 'RECOVER-PASSWORD'
 
     // login page state
     loginEmail: '',
@@ -53,7 +54,8 @@ export class App extends React.Component {
       notLoginUserRoute,
       createAccountEmail,
       createAccountPassword,
-      createAccountRepeatPassword
+      createAccountRepeatPassword,
+      recoverPasswordEmail
     } = this.state
     return (
       <div>
@@ -85,7 +87,16 @@ export class App extends React.Component {
                 />
                 {/* eslint-disable-next-line react/jsx-closing-tag-location */}
               </FullPageLayout>
-              : null
+              : notLoginUserRoute === 'RECOVER-PASSWORD' ?
+                <FullPageLayout>
+                  <RecoverPasswordForm
+                    email={recoverPasswordEmail}
+                    onChangeEmail={(e) => this.setState(() => ({ recoverPasswordEmail: e.target.value }))}
+                    onClickRecover={() => console.log('onClickRecover')}
+                    onClickBackToLogin={() => console.log('onClickBackToLogin')}
+                  />
+                </FullPageLayout>
+                : null
 
         }
 
