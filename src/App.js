@@ -10,7 +10,7 @@ import LoginForm from './components/LoginForm/LoginForm'
 import CreateAccountForm from './components/CreateAccountForm'
 import RecoverPasswordForm from './components/RecoverPasswordForm'
 
-import { signIn } from './auth'
+import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail } from './auth'
 
 const EMAIL_VALIDATION_ERROR = 'Please type a valid e-mail!'
 const PASSWORD_VALIDATION_ERROR = 'Password must have at least 6 chars!'
@@ -59,6 +59,13 @@ export class App extends React.Component {
     searchPhrase: ''
   }
 
+  async componentDidMount () {
+    this.setState(() => ({ isLoading: true }))
+    const userIsLoggedIn = await checkIfUserIsLoggedIn()
+    this.setState(() => ({ isLoading: false }))
+    if (userIsLoggedIn) this.onUserLogin()
+  }
+
   onClickLogin = async () => {
     this.setState(() => ({ loginSubmitted: true }))
 
@@ -68,6 +75,7 @@ export class App extends React.Component {
     this.setState(() => ({ isLoading: true }))
     try {
       await signIn(this.state.loginEmail, this.state.loginPassword)
+      this.onUserLogin()
     } catch (error) {
       this.setState(() => ({
         hasError: true,
@@ -85,7 +93,23 @@ export class App extends React.Component {
     if (this.state.createAccountPasswordError) return
     if (this.state.createAccountRepeatPasswordError) return
 
-    console.log('onClickCreateAccount')
+    this.setState(() => ({ isLoading: true }))
+    try {
+      await signUp(this.state.createAccountEmail, this.state.createAccountPassword)
+      this.setState(() => ({
+        isInfoDisplayed: true,
+        infoMessage: 'User account created. User is logged in!'
+
+      }))
+      this.onUserLogin()
+    } catch (error) {
+      this.setState(() => ({
+        hasError: true,
+        errorMessage: error.data.error.message
+      }))
+    } finally {
+      this.setState(() => ({ isLoading: false }))
+    }
   }
 
   onClickRecover = async () => {
@@ -93,7 +117,36 @@ export class App extends React.Component {
 
     if (this.state.recoverPasswordEmailError) return
 
-    console.log('onClickRecover')
+    this.setState(() => ({ isLoading: true }))
+    try {
+      await sendPasswordResetEmail(this.state.recoverPasswordEmail)
+      this.setState(() => ({
+        isInfoDisplayed: true,
+        infoMessage: 'Check your inbox!'
+      }))
+      this.onUserLogin()
+    } catch (error) {
+      this.setState(() => ({
+        hasError: true,
+        errorMessage: error.data.error.message
+      }))
+    } finally {
+      this.setState(() => ({ isLoading: false }))
+    }
+  }
+
+  onUserLogin = () => {
+    const token = getIdToken()
+    if (!token) return
+    const user = decodeToken(token)
+
+    // @TODO replace this token decoding with request for user data
+    this.setState(() => ({
+      isUserLoggedIn: true,
+      userDisplayName: '',
+      userEmail: user.email,
+      userAvatar: ''
+    }))
   }
 
   dismissError = () => {
@@ -103,8 +156,16 @@ export class App extends React.Component {
     }))
   }
 
+  dismissMessage= () => {
+    this.setState(() => ({
+      isInfoDisplayed: false,
+      infoMessage: ''
+    }))
+  }
+
   render () {
     const {
+      isUserLoggedIn,
       loginEmail,
       loginEmailError,
       loginPassword,
@@ -130,72 +191,75 @@ export class App extends React.Component {
     return (
       <div>
         {
-          notLoginUserRoute === 'LOGIN'
-            ? <FullPageLayout>
-              <LoginForm
-                email={loginEmail}
-                emailError={loginSubmitted ? loginEmailError : undefined}
-                password={loginPassword}
-                passwordError={loginSubmitted ? loginPasswordError : undefined}
-                onChangeEmail={(e) => {
-                  this.setState(() => ({
-                    loginEmail: e.target.value,
-                    loginEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
-                  }))
-                }}
-                onChangePassword={(e) => {
-                  this.setState(() => ({
-                    loginPassword: e.target.value,
-                    loginPasswordError: e.target.value.length >= 6 ? '' : PASSWORD_VALIDATION_ERROR
-                  }))
-                }}
-                onClickLogin={this.onClickLogin}
-                onClickCreateAccount={() => this.setState(() => ({ notLoginUserRoute: 'CREATE-ACCOUNT' }))}
-                onClickForgotPassword={() => this.setState(() => ({ notLoginUserRoute: 'RECOVER-PASSWORD' }))}
-              />
-              {/* eslint-disable-next-line react/jsx-closing-tag-location */}
-            </FullPageLayout>
-            : notLoginUserRoute === 'CREATE-ACCOUNT'
+          isUserLoggedIn ?
+            'LOGIN USER CONTENT'
+            :
+            notLoginUserRoute === 'LOGIN'
               ? <FullPageLayout>
-                <CreateAccountForm
-                  eemail={createAccountEmail}
-                  emailError={createAccountSubmitted ? createAccountEmailError : undefined}
-                  password={createAccountPassword}
-                  passwordError={createAccountSubmitted ? createAccountPasswordError : undefined}
-                  repeatPassword={createAccountRepeatPassword}
-                  repeatPasswordError={createAccountSubmitted ? createAccountRepeatPasswordError : undefined}
-                  onChangeEmail={(e) => this.setState(() => ({
-                    createAccountEmail: e.target.value,
-                    createAccountEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
-                  }))}
-                  onChangePassword={(e) => this.setState(() => ({
-                    createAccountPassword: e.target.value,
-                    createAccountPasswordError: e.target.value.length >= 6 ? '' : PASSWORD_VALIDATION_ERROR,
-                    createAccountRepeatPasswordError: createAccountRepeatPassword === e.target.value ? '' : REPEAT_PASSWORD_VALIDATION_ERROR
-                  }))}
-                  onChangeRepeatPassword={(e) => this.setState(() => ({
-                    createAccountRepeatPassword: e.target.value,
-                    createAccountRepeatPasswordError: createAccountPassword === e.target.value ? '' : REPEAT_PASSWORD_VALIDATION_ERROR
-                  }))}
-                  onClickCreateAccount={this.onClickCreateAccount}
-                  onClickBackToLogin={() => this.setState(() => ({ notLoginUserRoute: 'LOGIN' }))}
+                <LoginForm
+                  email={loginEmail}
+                  emailError={loginSubmitted ? loginEmailError : undefined}
+                  password={loginPassword}
+                  passwordError={loginSubmitted ? loginPasswordError : undefined}
+                  onChangeEmail={(e) => {
+                    this.setState(() => ({
+                      loginEmail: e.target.value,
+                      loginEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
+                    }))
+                  }}
+                  onChangePassword={(e) => {
+                    this.setState(() => ({
+                      loginPassword: e.target.value,
+                      loginPasswordError: e.target.value.length >= 6 ? '' : PASSWORD_VALIDATION_ERROR
+                    }))
+                  }}
+                  onClickLogin={this.onClickLogin}
+                  onClickCreateAccount={() => this.setState(() => ({ notLoginUserRoute: 'CREATE-ACCOUNT' }))}
+                  onClickForgotPassword={() => this.setState(() => ({ notLoginUserRoute: 'RECOVER-PASSWORD' }))}
                 />
                 {/* eslint-disable-next-line react/jsx-closing-tag-location */}
               </FullPageLayout>
-              : notLoginUserRoute === 'RECOVER-PASSWORD' ?
-                <FullPageLayout>
-                  <RecoverPasswordForm
-                    email={recoverPasswordEmail}
-                    emailError={recoverPasswordSubmitted ? recoverPasswordEmailError : undefined}
+              : notLoginUserRoute === 'CREATE-ACCOUNT'
+                ? <FullPageLayout>
+                  <CreateAccountForm
+                    eemail={createAccountEmail}
+                    emailError={createAccountSubmitted ? createAccountEmailError : undefined}
+                    password={createAccountPassword}
+                    passwordError={createAccountSubmitted ? createAccountPasswordError : undefined}
+                    repeatPassword={createAccountRepeatPassword}
+                    repeatPasswordError={createAccountSubmitted ? createAccountRepeatPasswordError : undefined}
                     onChangeEmail={(e) => this.setState(() => ({
-                      recoverPasswordEmail: e.target.value,
-                      recoverPasswordEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
+                      createAccountEmail: e.target.value,
+                      createAccountEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
                     }))}
-                    onClickRecover={this.onClickRecover}
+                    onChangePassword={(e) => this.setState(() => ({
+                      createAccountPassword: e.target.value,
+                      createAccountPasswordError: e.target.value.length >= 6 ? '' : PASSWORD_VALIDATION_ERROR,
+                      createAccountRepeatPasswordError: createAccountRepeatPassword === e.target.value ? '' : REPEAT_PASSWORD_VALIDATION_ERROR
+                    }))}
+                    onChangeRepeatPassword={(e) => this.setState(() => ({
+                      createAccountRepeatPassword: e.target.value,
+                      createAccountRepeatPasswordError: createAccountPassword === e.target.value ? '' : REPEAT_PASSWORD_VALIDATION_ERROR
+                    }))}
+                    onClickCreateAccount={this.onClickCreateAccount}
                     onClickBackToLogin={() => this.setState(() => ({ notLoginUserRoute: 'LOGIN' }))}
                   />
+                  {/* eslint-disable-next-line react/jsx-closing-tag-location */}
                 </FullPageLayout>
-                : null
+                : notLoginUserRoute === 'RECOVER-PASSWORD' ?
+                  <FullPageLayout>
+                    <RecoverPasswordForm
+                      email={recoverPasswordEmail}
+                      emailError={recoverPasswordSubmitted ? recoverPasswordEmailError : undefined}
+                      onChangeEmail={(e) => this.setState(() => ({
+                        recoverPasswordEmail: e.target.value,
+                        recoverPasswordEmailError: isEmail(e.target.value) ? '' : EMAIL_VALIDATION_ERROR
+                      }))}
+                      onClickRecover={this.onClickRecover}
+                      onClickBackToLogin={() => this.setState(() => ({ notLoginUserRoute: 'LOGIN' }))}
+                    />
+                  </FullPageLayout>
+                  : null
 
         }
 
@@ -210,7 +274,8 @@ export class App extends React.Component {
             ? <FullPageMessage
                 message={infoMessage}
                 iconVariant={'info'}
-                onButtonClick={console.log}
+                buttonLabel={'OK'}
+                onButtonClick={this.dismissMessage}
               />
             : null
         }
