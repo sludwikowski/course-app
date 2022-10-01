@@ -9,6 +9,9 @@ import Message from './components/Message'
 import LoginForm from './components/LoginForm/LoginForm'
 import CreateAccountForm from './components/CreateAccountForm'
 import RecoverPasswordForm from './components/RecoverPasswordForm'
+import AppBar from './components/AppBar'
+import Logo from './components/Logo'
+import UserDropdown from './components/UserDropdown'
 
 import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail } from './auth'
 
@@ -192,7 +195,13 @@ export class App extends React.Component {
       <div>
         {
           isUserLoggedIn ?
-            'LOGIN USER CONTENT'
+            <div>
+              <AppBar>
+                <Logo/>
+                <UserDropdown/>
+              </AppBar>
+            </div>
+
             :
             notLoginUserRoute === 'LOGIN'
               ? <FullPageLayout>
