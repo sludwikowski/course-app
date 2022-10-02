@@ -6,7 +6,7 @@ import FullPageLayout from './components/FullPageLayout'
 import FullPageMessage from './components/FullPageMessage'
 import FullPageLoader from './components/FullPageLoader'
 import Message from './components/Message'
-import LoginForm from './components/LoginForm/LoginForm'
+import LoginForm from './components/LoginForm'
 import CreateAccountForm from './components/CreateAccountForm'
 import RecoverPasswordForm from './components/RecoverPasswordForm'
 import AppBar from './components/AppBar'
@@ -17,11 +17,14 @@ import List from './components/List'
 
 import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail, logOut } from './auth'
 
+import { getAll as getAllCourses } from './api/courses'
+
 import classes from './styles.module.css'
 
 const EMAIL_VALIDATION_ERROR = 'Please type a valid e-mail!'
 const PASSWORD_VALIDATION_ERROR = 'Password must have at least 6 chars!'
 const REPEAT_PASSWORD_VALIDATION_ERROR = 'Passwords must be the same!'
+
 export class App extends React.Component {
   state = {
     // global state
@@ -37,7 +40,7 @@ export class App extends React.Component {
     userEmail: '',
     userAvatar: '',
 
-    // user UserDropdown
+    // user dropdown
     isUserDropdownOpen: false,
 
     // router state
@@ -57,14 +60,14 @@ export class App extends React.Component {
     createAccountPasswordError: PASSWORD_VALIDATION_ERROR,
     createAccountRepeatPassword: '',
     createAccountRepeatPasswordError: REPEAT_PASSWORD_VALIDATION_ERROR,
-    createAccountSubmited: false,
+    createAccountSubmitted: false,
 
     // recover password page
     recoverPasswordEmail: '',
     recoverPasswordEmailError: EMAIL_VALIDATION_ERROR,
     recoverPasswordSubmitted: false,
 
-    // course list
+    // course list page
     courses: null,
     searchPhrase: ''
   }
@@ -109,7 +112,6 @@ export class App extends React.Component {
       this.setState(() => ({
         isInfoDisplayed: true,
         infoMessage: 'User account created. User is logged in!'
-
       }))
       this.onUserLogin()
     } catch (error) {
@@ -145,6 +147,11 @@ export class App extends React.Component {
     }
   }
 
+  fetchCourses = async () => {
+    const courses = await getAllCourses()
+    console.log(courses)
+  }
+
   onUserLogin = () => {
     const token = getIdToken()
     if (!token) return
@@ -157,6 +164,8 @@ export class App extends React.Component {
       userEmail: user.email,
       userAvatar: ''
     }))
+
+    this.fetchCourses()
   }
 
   onClickLogOut = async () => {
@@ -176,7 +185,7 @@ export class App extends React.Component {
     }))
   }
 
-  dismissMessage= () => {
+  dismissMessage = () => {
     this.setState(() => ({
       isInfoDisplayed: false,
       infoMessage: ''
@@ -212,8 +221,10 @@ export class App extends React.Component {
       recoverPasswordEmailError,
       recoverPasswordSubmitted
     } = this.state
+
     return (
       <div>
+
         {
           isUserLoggedIn ?
             <div>
@@ -227,7 +238,7 @@ export class App extends React.Component {
                   userEmail={userEmail}
                   userAvatar={userAvatar}
                   onClick={() => this.setState((prevState) => ({ isUserDropdownOpen: !prevState.isUserDropdownOpen }))}
-                  contentList= {
+                  contentList={
                     isUserDropdownOpen ?
                       <List
                         className={classes.userDropdownList}
@@ -239,19 +250,19 @@ export class App extends React.Component {
                         />
                         <ListItem
                           icon={'log-out'}
-                          text={'Log-out'}
+                          text={'Log out'}
                           onClick={this.onClickLogOut}
                         />
                       </List>
                       :
-                      null}
+                      null
+                  }
                 />
               </AppBar>
             </div>
-
             :
-            notLoginUserRoute === 'LOGIN'
-              ? <FullPageLayout>
+            notLoginUserRoute === 'LOGIN' ?
+              <FullPageLayout>
                 <LoginForm
                   email={loginEmail}
                   emailError={loginSubmitted ? loginEmailError : undefined}
@@ -273,12 +284,12 @@ export class App extends React.Component {
                   onClickCreateAccount={() => this.setState(() => ({ notLoginUserRoute: 'CREATE-ACCOUNT' }))}
                   onClickForgotPassword={() => this.setState(() => ({ notLoginUserRoute: 'RECOVER-PASSWORD' }))}
                 />
-                {/* eslint-disable-next-line react/jsx-closing-tag-location */}
               </FullPageLayout>
-              : notLoginUserRoute === 'CREATE-ACCOUNT'
-                ? <FullPageLayout>
+              :
+              notLoginUserRoute === 'CREATE-ACCOUNT' ?
+                <FullPageLayout>
                   <CreateAccountForm
-                    eemail={createAccountEmail}
+                    email={createAccountEmail}
                     emailError={createAccountSubmitted ? createAccountEmailError : undefined}
                     password={createAccountPassword}
                     passwordError={createAccountSubmitted ? createAccountPasswordError : undefined}
@@ -300,9 +311,9 @@ export class App extends React.Component {
                     onClickCreateAccount={this.onClickCreateAccount}
                     onClickBackToLogin={() => this.setState(() => ({ notLoginUserRoute: 'LOGIN' }))}
                   />
-                  {/* eslint-disable-next-line react/jsx-closing-tag-location */}
                 </FullPageLayout>
-                : notLoginUserRoute === 'RECOVER-PASSWORD' ?
+                :
+                notLoginUserRoute === 'RECOVER-PASSWORD' ?
                   <FullPageLayout>
                     <RecoverPasswordForm
                       email={recoverPasswordEmail}
@@ -315,45 +326,48 @@ export class App extends React.Component {
                       onClickBackToLogin={() => this.setState(() => ({ notLoginUserRoute: 'LOGIN' }))}
                     />
                   </FullPageLayout>
-                  : null
-
+                  :
+                  null
         }
 
         {
-          isLoading
-            ? <FullPageLoader />
-            : null
+          isLoading ?
+            <FullPageLoader />
+            :
+            null
         }
 
         {
-          isInfoDisplayed
-            ? <FullPageMessage
-                message={infoMessage}
-                iconVariant={'info'}
-                buttonLabel={'OK'}
-                onButtonClick={this.dismissMessage}
-              />
-            : null
+          isInfoDisplayed ?
+            <FullPageMessage
+              message={infoMessage}
+              iconVariant={'info'}
+              buttonLabel={'OK'}
+              onButtonClick={this.dismissMessage}
+            />
+            :
+            null
         }
 
         {
-          hasError
-            ? <FullPageLayout
-                className={'wrapper-class'}
-              >
+          hasError ?
+            <FullPageLayout
+              className={'wrapper-class'}
+            >
               <Message
                 className={'regular-class'}
                 message={errorMessage}
                 iconVariant={'error'}
                 onButtonClick={this.dismissError}
               />
-              {/* eslint-disable-next-line react/jsx-closing-tag-location */}
             </FullPageLayout>
-            : null
+            :
+            null
         }
 
       </div>
     )
   }
 }
+
 export default App
