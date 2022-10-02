@@ -12,8 +12,10 @@ import RecoverPasswordForm from './components/RecoverPasswordForm'
 import AppBar from './components/AppBar'
 import Logo from './components/Logo'
 import UserDropdown from './components/UserDropdown'
+import ListItem from './components/ListItem'
+import List from './components/List'
 
-import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail } from './auth'
+import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail, logOut } from './auth'
 
 import classes from './styles.module.css'
 
@@ -34,6 +36,9 @@ export class App extends React.Component {
     userDisplayName: '',
     userEmail: '',
     userAvatar: '',
+
+    // user UserDropdown
+    isUserDropdownOpen: false,
 
     // router state
     notLoginUserRoute: 'LOGIN', // 'CREATE-ACCOUNT' or 'RECOVER-PASSWORD'
@@ -154,6 +159,16 @@ export class App extends React.Component {
     }))
   }
 
+  onClickLogOut = async () => {
+    await logOut()
+    this.setState(() => ({
+      isUserLoggedIn: false,
+      userDisplayName: '',
+      userEmail: '',
+      userAvatar: ''
+    }))
+  }
+
   dismissError = () => {
     this.setState(() => ({
       hasError: false,
@@ -174,6 +189,7 @@ export class App extends React.Component {
       userDisplayName,
       userEmail,
       userAvatar,
+      isUserDropdownOpen,
       loginEmail,
       loginEmailError,
       loginPassword,
@@ -210,7 +226,25 @@ export class App extends React.Component {
                   userDisplayName={userDisplayName}
                   userEmail={userEmail}
                   userAvatar={userAvatar}
-                  contentList={'contentList const'}
+                  onClick={() => this.setState((prevState) => ({ isUserDropdownOpen: !prevState.isUserDropdownOpen }))}
+                  contentList= {
+                    isUserDropdownOpen ?
+                      <List
+                        className={classes.userDropdownList}
+                      >
+                        <ListItem
+                          icon={'profile'}
+                          text={'Profile'}
+                          disabled={true}
+                        />
+                        <ListItem
+                          icon={'log-out'}
+                          text={'Log-out'}
+                          onClick={this.onClickLogOut}
+                        />
+                      </List>
+                      :
+                      null}
                 />
               </AppBar>
             </div>
