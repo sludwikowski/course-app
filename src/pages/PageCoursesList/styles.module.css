@@ -1,5 +1,6 @@
-@media (max-width: 475px) {
+.root {}
 
+@media (max-width: 475px) {
   .logo {
     width: 142px;
   }
@@ -8,7 +9,7 @@
   }
 }
 
-.userDropdownList{
+.userDropdownList {
   width: 220px;
 }
 
