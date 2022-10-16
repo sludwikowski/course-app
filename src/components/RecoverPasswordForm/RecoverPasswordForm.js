@@ -62,7 +62,7 @@ export const RecoverPasswordForm = (props) => {
 RecoverPasswordForm.propTypes = {
   className: PropTypes.string,
   email: PropTypes.string,
-  emailError: PropTypes.string.isRequired,
+  emailError: PropTypes.string,
   onChangeEmail: PropTypes.func.isRequired,
   onClickRecover: PropTypes.func.isRequired,
   onClickBackToLogin: PropTypes.func.isRequired
