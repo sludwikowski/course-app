@@ -146,8 +146,6 @@ export const App = () => {
           notLoginUserRoute === 'LOGIN' ?
             <PageLogin
               onClickLogin={onClickLogin}
-              onClickCreateAccount={() => routeTo('CREATE-ACCOUNT')}
-              onClickForgotPassword={() => routeTo('RECOVER-PASSWORD')}
             />
             :
             notLoginUserRoute === 'CREATE-ACCOUNT' ?
