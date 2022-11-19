@@ -28,6 +28,7 @@ import {
   getUserData as getUserDataAPICall
 } from './auth'
 
+import { getMultiple as getMultipleLessons } from './api/lessons'
 import { getAll as getAllCourses } from './api/courses'
 import { upload as uploadAvatar } from './api/avatar'
 
@@ -43,6 +44,9 @@ export const App = () => {
 
   // courses
   const [courses, setCourses] = React.useState(null)
+
+  // lessons
+  const [lessons, setLessons] = React.useState(null)
 
   const {
     isUserLoggedIn,
@@ -67,6 +71,17 @@ export const App = () => {
     const courses = await getAllCourses()
     setCourses(() => courses)
   }, [])
+
+  const fetchLessonsByIds = React.useCallback(async (lessonsIds) => {
+    const lessons = await getMultipleLessons(lessonsIds)
+    setLessons(() => lessons)
+  }, [])
+
+  const fetchLessonsByIdsWithLoaders = React.useCallback((lessonsIds) => {
+    handleAsyncAction(async () => {
+      fetchLessonsByIds(lessonsIds)
+    })
+  }, [fetchLessonsByIds, handleAsyncAction])
 
   const getUserData = React.useCallback(async () => {
     const user = await getUserDataAPICall()
@@ -177,7 +192,13 @@ export const App = () => {
               />
               <Route
                 path={'courses/:courseId'}
-                element={<PageCourse/>}
+                element={
+                  <PageCourse
+                    lessons={lessons}
+                    courses={courses}
+                    fetchLessonsByIds={fetchLessonsByIdsWithLoaders}
+                  />
+                    }
               >
                 <Route
                   index={true}
