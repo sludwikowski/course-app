@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { Outlet } from 'react-router-dom'
+import CourseLayout from '../../templates/CourseLayout/CourseLayout'
 
-import { Box } from '@mui/material'
+import { Outlet } from 'react-router-dom'
 
 export const PageCourse = (props) => {
   const {
@@ -12,15 +12,18 @@ export const PageCourse = (props) => {
   } = props
 
   return (
-    <Box
-      sx={{
-        ...sx
-      }}
+    <CourseLayout
+      slotContent={
+        <Outlet/>
+          }
+      slotSidebar={
+            (new Array(111)).fill(<p>SIDEBAR</p>)
+          }
+      slotTitle={
+            (new Array(111)).fill(<p>TITLE</p>)
+          }
       {...otherProps}
-    >
-      PageCourse
-      <Outlet/>
-    </Box>
+    />
   )
 }
 
