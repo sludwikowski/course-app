@@ -18,13 +18,14 @@ export const PageProfile = (props) => {
   const {
     className,
     onSaveChanges,
+    onAvatarChange,
     ...otherProps
   } = props
 
   const {
     userDisplayName,
-    userEmail
-    // userAvatar
+    userEmail,
+    userAvatar
   } = useAuthUser()
 
   const methods = useForm({
@@ -68,6 +69,8 @@ export const PageProfile = (props) => {
             {...methods}
           >
             <ProfileForm
+              avatarSrc={userAvatar}
+              onAvatarChange={(file) => onAvatarChange(file)}
               onSubmit={handleSubmit(async (data) => {
                 await onSaveChanges(data.displayName)
                 onClickGoBack()
@@ -82,7 +85,7 @@ export const PageProfile = (props) => {
 
 PageProfile.propTypes = {
   className: PropTypes.string,
-  onSaveChanges: PropTypes.func.isRequired
+  onSaveChanges: PropTypes.func.isRequired,
+  onAvatarChange: PropTypes.func.isRequired
 }
-
 export default PageProfile
