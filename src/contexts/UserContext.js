@@ -71,4 +71,5 @@ export const UserContextProvider = (props) => {
 UserContextProvider.propTypes = {
   children: PropTypes.node
 }
+
 export default UserContextProvider

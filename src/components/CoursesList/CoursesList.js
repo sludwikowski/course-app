@@ -9,6 +9,7 @@ export const CoursesList = (props) => {
   const {
     className,
     courses,
+    onClickCourse,
     ...otherProps
   } = props
 
@@ -29,29 +30,31 @@ export const CoursesList = (props) => {
                 <div
                   key={course.id}
                   className={
-                [
-                  classes.courseCardWrapper,
-                  isThirdLeft ? classes.isThirdLeft : null,
-                  isThirdRight ? classes.isThirdRight : null
-                ]
-                  .filter((className) => className)
-                  .join(' ')
-              }
+                          [
+                            classes.courseCardWrapper,
+                            isThirdLeft ? classes.isThirdLeft : null,
+                            isThirdRight ? classes.isThirdRight : null
+                          ]
+                            .filter((className) => className)
+                            .join(' ')
+                        }
                 >
                   <CourseCard
+                    onClick={() => onClickCourse(course.id)}
                     course={course}
                   />
                 </div>
               )
             })
-      }
+        }
     </div>
   )
 }
 
 CoursesList.propTypes = {
   className: PropTypes.string,
-  courses: PropTypes.arrayOf(CoursePropType)
+  courses: PropTypes.arrayOf(CoursePropType),
+  onClickCourse: PropTypes.func
 }
 
 export default CoursesList

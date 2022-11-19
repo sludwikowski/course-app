@@ -88,4 +88,5 @@ PageProfile.propTypes = {
   onSaveChanges: PropTypes.func.isRequired,
   onAvatarChange: PropTypes.func.isRequired
 }
+
 export default PageProfile
