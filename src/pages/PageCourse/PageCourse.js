@@ -1,14 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import CourseLayout from '../../templates/CourseLayout/CourseLayout'
+import GoBackButton from '../../components/GoBackButton'
+import LessonsList from '../../components/LessonsList'
+import CourseTitle from '../../components/CourseTitle'
+import { LessonPropType } from '../../components/LessonListItem'
+import { CoursePropType } from '../../components/CourseCard'
+
+import CourseLayout from '../../templates/CourseLayout'
 
 import { useParams, useNavigate, Outlet } from 'react-router-dom'
 
-import { Tooltip, Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Videocam as VideocamIcon } from '@mui/icons-material'
-
-import { CoursePropType } from '../../components/CourseCard'
+import { Box } from '@mui/material'
 
 export const PageCourse = (props) => {
   const {
@@ -21,6 +24,10 @@ export const PageCourse = (props) => {
 
   const { courseId } = useParams()
   const navigate = useNavigate()
+  // we want to memoize `navigate` as we only navigating absolute paths
+  // and we do not want to trigger use effect on avery `navigate` changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const navigateMemoized = React.useMemo(() => navigate, [])
 
   const currentCourse = courses && courses.find((course) => {
     return course.id === courseId
@@ -29,14 +36,20 @@ export const PageCourse = (props) => {
 
   React.useEffect(() => {
     if (!lessonsIds) {
-      navigate('/')
+      navigateMemoized('/')
       return
     }
+    console.log('fetchLessonsByIds')
     fetchLessonsByIds(lessonsIds)
-  }, [fetchLessonsByIds, lessonsIds, navigate])
+  }, [fetchLessonsByIds, lessonsIds, navigateMemoized])
 
   return (
     <CourseLayout
+      slotGoBackButton={
+        <GoBackButton
+          onClick={() => navigate('/')}
+        />
+          }
       slotContent={
         <Box
           sx={{
@@ -50,57 +63,16 @@ export const PageCourse = (props) => {
         </Box>
           }
       slotSidebar={
-        <List>
-          {
-                  lessons && lessons.map((lesson, i) => {
-                    return (
-                      <Tooltip
-                        key={lesson.id}
-                        title={lesson.title}
-                        enterDelay={500}
-                      >
-                        <ListItem
-                          disablePadding={true}
-                        >
-                          <ListItemButton
-                            sx={{ width: '100%' }}
-                            onClick={() => navigate(lesson.id)}
-                          >
-                            <ListItemIcon>
-                              <VideocamIcon/>
-                            </ListItemIcon>
-                            <ListItemText
-                              primaryTypographyProps={{
-                                noWrap: true
-                              }}
-                              primary={`${i + 1}. ${lesson.title}`}
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      </Tooltip>
-                    )
-                  })
-              }
-        </List>
+        <LessonsList
+          lessons={lessons}
+          onClickLesson={(lessonId) => navigate(lessonId)}
+        />
           }
       slotTitle={
             currentCourse ?
-              <Box
-                sx={{
-                  margin: 2
-                }}
-              >
-                <Typography
-                  variant={'h4'}
-                >
-                  {currentCourse.title}
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                >
-                  {currentCourse.description}
-                </Typography>
-              </Box>
+              <CourseTitle
+                course={currentCourse}
+              />
               :
               null
           }
@@ -112,7 +84,7 @@ export const PageCourse = (props) => {
 PageCourse.propTypes = {
   sx: PropTypes.object,
   courses: PropTypes.arrayOf(CoursePropType),
-  lessons: PropTypes.arrayOf(PropTypes.object),
+  lessons: PropTypes.arrayOf(LessonPropType),
   fetchLessonsByIds: PropTypes.func
 }
 

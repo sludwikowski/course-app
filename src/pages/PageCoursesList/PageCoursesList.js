@@ -8,7 +8,7 @@ import UserDropdown from '../../components/UserDropdown'
 import ListItem from '../../components/ListItem'
 import List from '../../components/List'
 import CoursesList from '../../components/CoursesList'
-import MainLayout from '../../components/MainLayout'
+import MainLayout from '../../templates/MainLayout'
 import TextField from '../../components/TextField'
 import { CoursePropType } from '../../components/CourseCard'
 
