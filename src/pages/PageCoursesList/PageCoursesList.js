@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import { useNavigate } from 'react-router-dom'
+
 import Logo from '../../components/Logo'
 import UserDropdown from '../../components/UserDropdown'
 import ListItem from '../../components/ListItem'
@@ -25,6 +27,9 @@ export const PageCoursesList = (props) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = React.useState(false)
   const [searchPhrase, setSearchPhrase] = React.useState('')
 
+  const navigate = useNavigate()
+  const onClickProfile = React.useCallback(() => navigate('/profile'), [navigate])
+
   const {
     userDisplayName,
     userEmail,
@@ -36,8 +41,8 @@ export const PageCoursesList = (props) => {
     return courses && courses.filter((course) => {
       return (
         course.title.toUpperCase().includes(searchPhraseUpperCase) ||
-        course.category.toUpperCase().includes(searchPhraseUpperCase) ||
-        course.description.toUpperCase().includes(searchPhraseUpperCase)
+          course.category.toUpperCase().includes(searchPhraseUpperCase) ||
+          course.description.toUpperCase().includes(searchPhraseUpperCase)
       )
     })
   }, [courses, searchPhrase])
@@ -61,27 +66,27 @@ export const PageCoursesList = (props) => {
               onOpenRequested={() => setIsUserDropdownOpen(() => true)}
               onCloseRequested={() => setIsUserDropdownOpen(() => false)}
               contentList={
-                isUserDropdownOpen ?
-                  <List
-                    className={classes.userDropdownList}
-                  >
-                    <ListItem
-                      icon={'profile'}
-                      text={'Profile'}
-                      disabled={true}
-                    />
-                    <ListItem
-                      icon={'log-out'}
-                      text={'Log out'}
-                      onClick={onClickLogOut}
-                    />
-                  </List>
-                  :
-                  null
-              }
+                      isUserDropdownOpen ?
+                        <List
+                          className={classes.userDropdownList}
+                        >
+                          <ListItem
+                            icon={'profile'}
+                            text={'Profile'}
+                            onClick={onClickProfile}
+                          />
+                          <ListItem
+                            icon={'log-out'}
+                            text={'Log out'}
+                            onClick={onClickLogOut}
+                          />
+                        </List>
+                        :
+                        null
+                    }
             />
           </>
-        }
+            }
         contentSearch={
           <TextField
             className={classes.searchTextField}
@@ -89,12 +94,12 @@ export const PageCoursesList = (props) => {
             value={searchPhrase}
             onChange={(e) => setSearchPhrase(() => e.target.value)}
           />
-        }
+            }
         contentMain={
           <CoursesList
             courses={filteredCourses}
           />
-        }
+            }
       />
     </div>
   )

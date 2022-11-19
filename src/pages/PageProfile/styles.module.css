@@ -1,0 +1,18 @@
+.root {}
+
+@media (max-width: 475px) {
+  .logo {
+    width: 142px;
+  }
+  .userDropdown {
+    width: calc(100% - 154px);
+  }
+}
+
+.userDropdownList {
+  width: 220px;
+}
+
+.searchTextField {
+  width: 100%;
+}
