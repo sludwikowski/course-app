@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { Routes, Route } from 'react-router-dom'
+
 import FullPageLayout from './components/FullPageLayout'
 import FullPageMessage from './components/FullPageMessage'
 import FullPageLoader from './components/FullPageLoader'
@@ -10,7 +12,6 @@ import PageLogin from './pages/PageLogin/PageLogin'
 import PageCreateAccount from './pages/PageCreateAccount'
 import PageRecoverPassword from './pages/PageRecoverPassword'
 
-import { useRoute } from './contexts/RouterContext'
 import { useAuthUser } from './contexts/UserContext'
 
 import { signIn, signUp, getIdToken, decodeToken, checkIfUserIsLoggedIn, sendPasswordResetEmail, logOut } from './auth'
@@ -24,9 +25,6 @@ export const App = () => {
   const [errorMessage, setErrorMessage] = React.useState('')
   const [isInfoDisplayed, setIsInfoDisplayed] = React.useState(false)
   const [infoMessage, setInfoMessage] = React.useState('')
-
-  // router state
-  const notLoginUserRoute = useRoute()
 
   // courses
   const [courses, setCourses] = React.useState(null)
@@ -125,64 +123,88 @@ export const App = () => {
     <div>
 
       {
-        isUserLoggedIn ?
-          <PageCoursesList
-            courses={courses}
-            onClickLogOut={onClickLogOut}
-          />
-          :
-          notLoginUserRoute === 'LOGIN' ?
-            <PageLogin
-              onClickLogin={onClickLogin}
+          isUserLoggedIn ?
+            <Routes>
+              <Route
+                path={'*'}
+                element={
+                  <PageCoursesList
+                    courses={courses}
+                    onClickLogOut={onClickLogOut}
+                  />
+                    }
+              />
+            </Routes>
+            :
+            null
+        }
+
+      {
+          !isUserLoggedIn ?
+            <Routes>
+              <Route
+                path={'*'}
+                element={
+                  <PageLogin
+                    onClickLogin={onClickLogin}
+                  />
+                    }
+              />
+              <Route
+                path={'/create-account'}
+                element={
+                  <PageCreateAccount
+                    onClickCreateAccount={onClickCreateAccount}
+                  />
+                    }
+              />
+              <Route
+                path={'/recover-password'}
+                element={
+                  <PageRecoverPassword
+                    onClickRecover={onClickRecover}
+                  />
+                    }
+              />
+            </Routes>
+            :
+            null
+        }
+
+      {
+          isLoading ?
+            <FullPageLoader/>
+            :
+            null
+        }
+
+      {
+          isInfoDisplayed ?
+            <FullPageMessage
+              message={infoMessage}
+              iconVariant={'info'}
+              buttonLabel={'OK'}
+              onButtonClick={dismissMessage}
             />
             :
-            notLoginUserRoute === 'CREATE-ACCOUNT' ?
-              <PageCreateAccount
-                onClickCreateAccount={onClickCreateAccount}
+            null
+        }
+
+      {
+          hasError ?
+            <FullPageLayout
+              className={'wrapper-class'}
+            >
+              <Message
+                className={'regular-class'}
+                message={errorMessage}
+                iconVariant={'error'}
+                onButtonClick={dismissError}
               />
-              :
-              notLoginUserRoute === 'RECOVER-PASSWORD' ?
-                <PageRecoverPassword
-                  onClickRecover={onClickRecover}
-                />
-                :
-                null
-      }
-
-      {
-        isLoading ?
-          <FullPageLoader />
-          :
-          null
-      }
-
-      {
-        isInfoDisplayed ?
-          <FullPageMessage
-            message={infoMessage}
-            iconVariant={'info'}
-            buttonLabel={'OK'}
-            onButtonClick={dismissMessage}
-          />
-          :
-          null
-      }
-
-      {
-        hasError ?
-          <FullPageLayout
-            className={'wrapper-class'}
-          >
-            <Message
-              className={'regular-class'}
-              message={errorMessage}
-              iconVariant={'error'}
-              onButtonClick={dismissError}
-            />
-          </FullPageLayout>
-          :
-          null
-      }
+            </FullPageLayout>
+            :
+            null
+        }
 
     </div>
   )
